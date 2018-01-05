@@ -45,6 +45,11 @@ cmd = oneOf("/Applications/SeaMonkey.app/Contents/MacOS/seamonkey",
                       "/usr/local/seamonkey/seamonkey",
                       "C:\\Program Files\\mozilla.org\\SeaMonkey\\seamonkey.exe")
 
+# So the event loop is a little weird. If you could not guess
+# it is the "WebExtensions" stdio API. over STDIN and STDOUT, a message size
+# then a message is sent. The latter is JSON, but the contents of the JSON
+# need not be.  Firefox and Chrome honor the WebExtensions API.
+
 while True:
     receivedMessage = getMessage()
     if receivedMessage.startswith("edit: "):
