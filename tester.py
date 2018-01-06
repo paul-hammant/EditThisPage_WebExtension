@@ -10,9 +10,24 @@ import os
 from time import sleep
 from termcolor import colored
 
-cmd_path = os.getcwd() + "/" + "edit_this_page.py"
-print("cmd path: " + cmd_path)
-edit_this_page = Popen(["python2", cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+if  len(sys.argv) < 2:
+    print "Add a parameter 'python' or 'rust' for which of the two to test"
+    exit (10)
+
+if "python" in sys.argv[1]:
+    cmd_path = os.getcwd() + "/" + "edit_this_page.py"
+    print("cmd path: " + cmd_path)
+    edit_this_page = Popen(["python2", cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+
+elif "rust" in sys.argv[1]:
+    cmd_path = os.getcwd() + "/" + "target/release/RustLauncher"
+    print("cmd path: " + cmd_path)
+    edit_this_page = Popen([cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+
+else:
+    print "Expected 'python' or 'rust' but got " + sys.argv[1] + " instead"
+    exit (10)
+
 
 # Read a message from stdin and decode it.
 def getMessage():
@@ -64,4 +79,3 @@ sendMessage(encodeMessage("quit"))
 reply = getMessage()
 edit_this_page.wait()
 print("... (" + color_it(reply) + ") done.")
-
