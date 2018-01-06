@@ -1,5 +1,5 @@
-# Copyright Paul Hammant, 2018
-# MIT license per the LICENSE.md in https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/LICENSE.txt
+// Copyright Paul Hammant, 2018
+// MIT license per the LICENSE.md in https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/LICENSE.txt
 
 extern crate serde_json;
 
@@ -85,9 +85,9 @@ fn main() {
         //"D:/Program Files (x86)/SeaMonkey/seamonkey.exe",
     ];
 
-    let cmd = one_of(&files).expect(&format!("Any of {:?} does not exist!", files));
     let mut stdout = std::io::stdout();
     let mut stdin = std::io::stdin();
+    let cmd = one_of(&files).expect(&format!("Any of {:?} does not exist!", files));
 
     loop {
         let reply;
