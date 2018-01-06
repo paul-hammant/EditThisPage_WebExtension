@@ -55,4 +55,4 @@ TODO
 
 # Credits
 
-Alexandr Lyashenko quickly wrote the Rust version for me via the UpWork platform. [His link there](https://www.upwork.com/freelancers/~01af9df894ec5fb364), and granted copyright to me. Credit where it's due though :)
+Alexandr Lyashenko quickly wrote the Rust version for me via the UpWork platform (based on the Python2 version I had written). [His link there](https://www.upwork.com/freelancers/~01af9df894ec5fb364), and granted copyright to me. Credit where it's due though :)
