@@ -1,0 +1,7 @@
+{
+  "name": "edit_this_page",
+  "description": "Launches SeaMonkey (other later) for editing a URL",
+  "path": "/usr/local/bin/edit_this_page",
+  "type": "stdio",
+  "allowed_extensions": [ "edit_this_page@hammant.org" ]
+}

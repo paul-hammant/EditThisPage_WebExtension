@@ -1,0 +1,28 @@
+{
+
+  "description": "Edit This Page WebExtension (add-on)",
+  "manifest_version": 2,
+  "name": "Edit This Page",
+  "version": "1.0",
+  "icons": {
+    "48": "icons/editicon.svg"
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "edit_this_page@hammant.org",
+      "strict_min_version": "50.0"
+    }
+  },
+
+  "background": {
+    "scripts": ["edit_this_page.js"]
+  },
+
+  "browser_action": {
+    "default_icon": "icons/message.svg"
+  },
+
+  "permissions": ["nativeMessaging", "tabs"]
+
+}
