@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# Adapted from https://github.com/mdn/webextensions-examples/blob/master/native-messaging/app/ping_pong.py
 # Python2
 
 import sys
