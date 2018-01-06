@@ -9,7 +9,6 @@ from subprocess import Popen, STDOUT
 import os
 from time import sleep
 
-
 def oneOf(one, two, three):
     if os.path.exists(one): return one
     if os.path.exists(two): return two

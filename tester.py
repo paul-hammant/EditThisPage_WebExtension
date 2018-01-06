@@ -15,12 +15,13 @@ if  len(sys.argv) < 2:
     exit (10)
 
 if "python" in sys.argv[1]:
-    cmd_path = os.getcwd() + "/" + "edit_this_page.py"
+    cmd_path = os.getcwd() + "/edit_this_page.py"
     print("cmd path: " + cmd_path)
     edit_this_page = Popen(["python2", cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
 elif "rust" in sys.argv[1]:
-    cmd_path = os.getcwd() + "/" + "target/release/RustLauncher"
+    cmd_path = os.getcwd() + "/app/target/release/edit_this_page"
+    print cmd_path
     print("cmd path: " + cmd_path)
     edit_this_page = Popen([cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
