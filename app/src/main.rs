@@ -86,7 +86,7 @@ fn main() {
 
     let mut stdout = std::io::stdout();
     let mut stdin = std::io::stdin();
-    let cmd = one_of(&files).expect(&format!("Any of {:?} does not exist!", files));
+    let cmd = one_of(&files).expect(&format!("None of these paths exixt: {:?}!", files));
 
     loop {
         let reply;
