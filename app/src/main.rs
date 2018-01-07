@@ -17,7 +17,6 @@ fn one_of(first: &[&str]) -> Option<PathBuf> {
             return Some(path);
         }
     }
-
     None
 }
 

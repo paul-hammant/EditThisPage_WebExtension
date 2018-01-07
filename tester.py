@@ -37,7 +37,11 @@ def getMessage():
         sys.exit(0)
     messageLength = struct.unpack('@I', rawLength)[0]
     message = edit_this_page.stdout.read(messageLength)
-    return json.loads(message)
+    try:
+        loads = json.loads(message)
+    except:
+        pass
+    return loads
 
 # Encode a message for transmission,
 # given its content.
@@ -58,20 +62,20 @@ def color_it(msg):
     else:
         return colored(msg, 'red')
 
-print("Asking edit_this_page.py to edit a page ...")
+print("Asking " + sys.argv[1] + " program to edit a page ...")
 sendMessage(encodeMessage("edit: https://en.wikipedia.org/wiki/Iron_Fist_(TV_series)"))
 print("... response from edit_this_page.py: " + color_it(getMessage()))
 
 sleep(5)
 
-print("Asking edit_this_page.py to edit another page ...")
+print("Asking " + sys.argv[1] + " program to edit another page ...")
 sendMessage(encodeMessage("edit: https://en.wikipedia.org/wiki/Luke_Cage_(TV_series)"))
 
 print("... response from edit_this_page.py: " + color_it(getMessage()))
 
 # ^ Unfortunately SeaMonkey doesn't want to launch a second exe concurrently :-(
 
-print("Asking edit_this_page.py to blahblahblah ...")
+print("Asking " + sys.argv[1] + " program to blahblahblah ...")
 sendMessage(encodeMessage("blahblahblah"))
 print("... response from edit_this_page.py: " + color_it(getMessage()))
 
