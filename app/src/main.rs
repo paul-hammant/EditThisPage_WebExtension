@@ -86,7 +86,8 @@ fn main() {
 
     let mut stdout = std::io::stdout();
     let mut stdin = std::io::stdin();
-    let cmd = one_of(&files).expect(&format!("None of these paths exixt: {:?}!", files));
+    let cmd = one_of(&files).expect(&format!("Error: None of these executable paths exist: \
+        {:?}, therefore no launching of an editor!", files));
 
     loop {
         let reply;

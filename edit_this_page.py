@@ -9,10 +9,10 @@ from subprocess import Popen, STDOUT
 import os
 from time import sleep
 
-def oneOf(one, two, three):
-    if os.path.exists(one): return one
-    if os.path.exists(two): return two
-    if os.path.exists(three): return three
+def oneOf(executables):
+    for executable in executables:
+        if os.path.exists(executable): return executable
+    return None
 
 # Read a message from stdin and decode it.
 def getMessage():
@@ -40,9 +40,14 @@ def launch(cmd_with_arg):
     with open(os.devnull, 'r+b', 0) as DEVNULL:
         Popen(cmd_with_arg, stdin=DEVNULL, stdout=DEVNULL, stderr=STDOUT, close_fds=True)
 
-cmd = oneOf("/Applications/SeaMonkey.app/Contents/MacOS/seamonkey",
-                      "/usr/local/seamonkey/seamonkey",
-                      "C:\\Program Files\\mozilla.org\\SeaMonkey\\seamonkey.exe")
+if os.name == 'nt':
+    executables = ["C:\\Program Files\\mozilla.org\\SeaMonkey\\seamonkey.exe"]
+elif os.name == 'mac':
+    executables = ["/Applications/SeaMonkey.app/Contents/MacOS/seamonkey"]
+else:
+    executables = ["/usr/local/seamonkey/seamonkey"]
+
+cmd = oneOf(executables)
 
 # So the event loop is a little weird. If you could not guess
 # it is the "WebExtensions" stdio API over STDIN and STDOUT, a message size
@@ -52,8 +57,12 @@ cmd = oneOf("/Applications/SeaMonkey.app/Contents/MacOS/seamonkey",
 while True:
     receivedMessage = getMessage()
     if receivedMessage.startswith("edit: "):
-        launch([cmd, "-edit", receivedMessage.split(": ")[1]])
-        sendMessage(encodeMessage("ok"))
+        if (cmd is None):
+            sendMessage(encodeMessage("Error: None of these executable paths exist: "
+                                      + str(executables) + ", therefore no launching of an editor!"))
+        else:
+            launch([cmd, "-edit", receivedMessage.split(": ")[1]])
+            sendMessage(encodeMessage("ok"))
     elif receivedMessage == "quit":
         sendMessage(encodeMessage("ok"))
         sleep(5)

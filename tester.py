@@ -37,11 +37,13 @@ def getMessage():
         sys.exit(0)
     messageLength = struct.unpack('@I', rawLength)[0]
     message = edit_this_page.stdout.read(messageLength)
+    print "mmmm: " + message
     try:
         loads = json.loads(message)
-    except:
-        pass
-    return loads
+        return loads
+    except ValueError:
+        raise Exception("Unexpected non-JSON message from in edit_this_page: " + str(rawLength) + message)
+
 
 # Encode a message for transmission,
 # given its content.
