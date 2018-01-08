@@ -3,7 +3,11 @@ or end user use yet.
 
 # WebExtension 'Edit this page' and native application launcher
 
-Preamble TODO
+This repo contains a JavaScript WebExtension for Firefox (and Chrome in time). It also contains a Rust 
+application that works together with the the WebExtension to perform a single finction on a desktop 
+computer:
+
+<p style="font-size: 130%"><b>Launch a fat-client editor on the desktop for the user for the url open in a tab in the browser.</b></p> 
 
 Rust is a better choice for Native application than Python, principaly because Python does not install
 smoothly onto Windows whereas Rust 'exe's don't require any installation and will just work.
@@ -42,16 +46,19 @@ handoff from its launch facility:
 
 ![image](https://user-images.githubusercontent.com/82182/34641477-408e6fb2-f2d3-11e7-8258-2f753ae4d86e.png)
 
-### Testing the Python application
+### Testing the legacy Python application
 
 You will have Python2 installed, and done `pip2 install termcolor` for an extra package.
 
 ```
 # be in the parent of the 'app' directory
-python2 tester.py python
+python2 test_harness.py python
 ```
 
-Same notes as for Rust.
+The same notes as for Rust apply.
+
+While the app is better as a Rust executable, the test harness will remain in Python.
+
 
 # Installation
 
@@ -69,15 +76,18 @@ Inside that manifest, there's a line for the full-qualified path to the `edit_th
 You'll need to change that. In the future I will make scripts to do the install for you.
 
 As ever you should be aware of what you're installing on your machine. The executuable, regardless of
-platform is compiled from this source file [https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/main.rs](https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/main.rs). You don't have to be super advanced with programming
-languages to read the source and see that it is 'ok' to install. If only we had a way of utilizing
-Mozilla's Continuous Integration to create and trusted 'exe' for each platform - **at install time**.
+platform is compiled from two small source files: 
+1. [https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/main.rs](https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/main.rs). 
+2. [https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/error.rs](https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/app/src/error.rs). 
+You don't have to be super advanced with programming
+languages to be able to read those sources and see that it is 'ok' to install. If only we had a way of utilizing
+Mozilla's Continuous Integration to create and trusted 'exe' for each platform - **at install time**!
 
 ### Footprint
 
-The app seems to take less that 1MB of memory and one thread while running (it runs perpetually presently).
-The Mac's activity monitor is reporting that there's no disk, no network and (effectively) no CPU being
-used by it.
+The app seems to take much less that 1MB of memory and a sigle thread while running (it stays active as a process even 
+when not being used). The Mac's activity monitor is reporting that there's no disk, no network and (effectively) no CPU 
+being used by it.
 
 ## Installing the WebExtension
 
