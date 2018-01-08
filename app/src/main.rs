@@ -1,7 +1,10 @@
 // Copyright Paul Hammant, 2018
-// MIT license per the LICENSE.md in https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/LICENSE.txt
+// MIT license per the LICENSE.md in
+// https://github.com/paul-hammant/EditThisPage_WebExtension/blob/master/LICENSE.txt
 
 extern crate serde_json;
+mod error;
+use error::Error;
 
 use std::path::PathBuf;
 use std::process::Command;
@@ -20,32 +23,6 @@ fn one_of(first: &[&str]) -> Option<PathBuf> {
     None
 }
 
-enum Error {
-    IO(std::io::Error),
-    UTF8(std::string::FromUtf8Error),
-}
-
-impl std::fmt::Debug for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            &Error::IO(ref err) => write!(f, "{:?}", err),
-            &Error::UTF8(ref err) => write!(f, "{:?}", err),
-        }
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::IO(err)
-    }
-}
-
-impl From<std::string::FromUtf8Error> for Error {
-    fn from(err: std::string::FromUtf8Error) -> Self {
-        Error::UTF8(err)
-    }
-}
-
 fn get_message<T: Read>(stdin: &mut T) -> Result<String, Error> {
     let mut bytes: [u8; 4] = [0; 4];
     stdin.read_exact(&mut bytes)?;
@@ -57,10 +34,12 @@ fn get_message<T: Read>(stdin: &mut T) -> Result<String, Error> {
 
 
     let result = String::from_utf8(bytes)?;
-    Ok(result)
+    Ok(decode(&result))
 }
 
 fn send_message<T: Write>(stdout: &mut T, msg: &str) -> Result<(), Error> {
+    let msg = encode(msg);
+
     let bytes: [u8; 4] = unsafe { transmute(msg.len() as u32) };
     stdout.write(&bytes)?;
     stdout.write(msg.as_bytes())?;
@@ -76,42 +55,62 @@ fn decode(text: &str) -> String {
     serde_json::from_str(text).unwrap()
 }
 
-fn main() {
-    let files = vec![
-        "/Applications/SeaMonkey.app/Contents/MacOS/seamonkey",
-        "/usr/local/seamonkey/seamonkey",
-        "C:/Program Files/mozilla.org/SeaMonkey/seamonkey.exe",
-        //"D:/Program Files (x86)/SeaMonkey/seamonkey.exe",
-    ];
+fn get_paths() -> Result<Vec<&'static str>, Error> {
+    let files;
+    if cfg![target_os = "windows"] {
+        files = vec![
+            "C:\\Program Files\\mozilla.org\\SeaMonkey\\seamonkey.exe",
+            "D:\\Program Files (x86)\\SeaMonkey\\seamonkey.exe",
+        ]
+    } else if cfg![target_os = "macos"] {
+        files = vec!["/Applications/SeaMonkey.app/Contents/MacOS/seamonkey"]
+    } else if cfg![target_os = "linux"] {
+        files = vec!["/usr/local/seamonkey/seamonkey"]
+    } else {
+        return Err(Error::Custom("Unknown OS".to_owned()));
+    };
+
+    Ok(files)
+}
+
+fn start() -> Result<(), Error> {
+    let files = get_paths()?;
+    let cmd = one_of(&files).ok_or(format!(
+        "Error: None of these executable paths exist:
+        {:?}, therefore no launching of an editor!",
+        files
+    ))?;
 
     let mut stdout = std::io::stdout();
     let mut stdin = std::io::stdin();
-    let cmd = one_of(&files).expect(&format!("Error: None of these executable paths exist: \
-        {:?}, therefore no launching of an editor!", files));
 
     loop {
         let reply;
-
-        let msg = get_message(&mut stdin).expect("Failed to read income msg");
-        let msg = decode(&msg);
+        let msg = get_message(&mut stdin)?;
 
         if msg.starts_with("edit: ") {
             let pieces = msg.split(": ").collect::<Vec<&str>>();
-            Command::new(&cmd)
-                .args(&["-edit", pieces[1]])
-                .spawn()
-                .expect("Failed to create child project");
+            Command::new(&cmd).args(&["-edit", pieces[1]]).spawn()?;
             reply = "ok";
 
         } else if msg == "quit" {
-            send_message(&mut stdout, &encode("ok")).expect("Failed to write reply");
-            thread::sleep(Duration::from_secs(5));
-            return;
+            send_message(&mut stdout, "ok")?;
 
+            thread::sleep(Duration::from_secs(5));
+            break;
         } else {
             reply = "Command not understood"
         }
 
-        send_message(&mut stdout, &encode(reply)).expect("Failed to write reply");
+        send_message(&mut stdout, reply)?;
+    }
+    return Ok(());
+}
+
+
+fn main() {
+    if let Err(err) = start() {
+        let last_msg = std::error::Error::description(&err);
+        send_message(&mut std::io::stdout(), last_msg).unwrap();
     }
 }
