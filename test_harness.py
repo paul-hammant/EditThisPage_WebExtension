@@ -14,8 +14,10 @@ if  len(sys.argv) < 2:
     print "Add a parameter 'python' or 'rust' for which of the two to test"
     exit (10)
 
+edit_this_page = None
+
 if "python" in sys.argv[1]:
-    cmd_path = os.getcwd() + "/edit_this_page.py"
+    cmd_path = os.getcwd() + "legacy/edit_this_page.py"
     print("cmd path: " + cmd_path)
     edit_this_page = Popen(["python2", cmd_path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
